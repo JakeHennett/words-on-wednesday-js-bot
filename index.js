@@ -96,10 +96,13 @@ async function sunday() {
 	// createPost("");
 }
 async function monday() {
-	// createPost("Modern Monday!");
+	// createPost("");
 }
 async function tuesday() {
-	// createPost("");
+  const posts = await readBlogspotRSS("Book%20Report");
+	const randomNumber = Math.floor(Math.random() * posts.length);
+	const post = posts[randomNumber];
+  await createPost(post, "Turn the Page Tuesday");
 }
 async function wednesday() {
 	const posts = await readBlogspotRSS();
@@ -217,24 +220,31 @@ async function readBlogspotRSS(label = "") {
 // randomPost(); //uncomment this to post a random post
 // readBlogspotRSS("Thirsty%20Thursday");
 // thursday(); //test thursday
+// tuesday(); //test tuesday
 
 const scheduleExpressionMinute = "* * * * *"; // Run once every minute for testing
 const scheduleExpression = "0 */3 * * *"; // Run once every three hours in prod
+const mondayScheduleExpression = "30 8 * * 1"; // Run Monday at 8:30am
+const tuesdayScheduleExpression = "30 8 * * 1"; // Run Tuesday at 8:30am
 const wednesdayScheduleExpression = "30 8 * * 3"; // Run Wednesday at 8:30am
 const thursdayScheduleExpression = "30 15 * * 4"; // Run Thursday at 3:30pm
 const fridayScheduleExpression = "30 9 * * 5"; // Run Friday at 9:30am
 const saturdayScheduleExpression = "0 11 * * 6" // Run Saturday at 11am
 const scheduleExpressionNoonDaily = "0 12 * * *"; // Run every day at noon
-// const job = new CronJob(scheduleExpression, main); // change to scheduleExpressionMinute for testing
+
+const monday_job = new cron_1.CronJob(mondayScheduleExpression, monday);
+const tuesday_job = new cron_1.CronJob(tuesdayScheduleExpression, tuesday);
 const wednesday_job = new cron_1.CronJob(
 	wednesdayScheduleExpression,
 	wednesday
 );
-const thursday_job = new cron_1.CronJob(thursdayScheduleExpression, thursday)
+const thursday_job = new cron_1.CronJob(thursdayScheduleExpression, thursday);
 const friday_job = new cron_1.CronJob(fridayScheduleExpression, friday);
-const saturday_job = new cron_1.CronJob(saturdayScheduleExpression, saturday)
+const saturday_job = new cron_1.CronJob(saturdayScheduleExpression, saturday);
 // const daily_job = new cron_1.CronJob(scheduleExpressionNoonDaily, daily);
-// job.start();
+
+// monday_job.start();
+tuesday_job.start();
 wednesday_job.start();
 thursday_job.start();
 friday_job.start();
