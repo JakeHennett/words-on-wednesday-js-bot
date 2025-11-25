@@ -112,7 +112,7 @@ async function wednesday() {
 	const postDate = new Date(post.pubDate).getTime(); // convert to timestamp
 	if (postDate > oneDayAgo) {
 		console.log("Post is from within the last day");
-    await createPost(post);
+    await createPost(post, "New Post Wednesday");
 	} else {
 		console.log("Older than 1 day");
 	}
@@ -127,7 +127,10 @@ async function friday() {
 	// createPost("It's Friday!!");
 }
 async function saturday() {
-	randomPost();
+	const posts = await readBlogspotRSS();
+	const randomNumber = Math.floor(Math.random() * posts.length);
+	const post = posts[randomNumber];
+  await createPost(post, "Shuffle Saturday");
 }
 
 async function randomPost() {
