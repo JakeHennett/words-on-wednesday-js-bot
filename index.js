@@ -121,10 +121,13 @@ async function thursday() {
   const posts = await readBlogspotRSS("Thirsty%20Thursday");
 	const randomNumber = Math.floor(Math.random() * posts.length);
 	const post = posts[randomNumber];
-  await createPost(post, "It's Thirsty Thursday!");
+  await createPost(post, "Thirsty Thursday");
 }
 async function friday() {
-	// createPost("It's Friday!!");
+	const posts = await readWordpressAPI();
+	const randomNumber = Math.floor(Math.random() * posts.length);
+	const post = posts[randomNumber];
+  await createPost(await castWordpressAsBlogger(post), "Flashback Friday");
 }
 async function saturday() {
 	const posts = await readBlogspotRSS();
@@ -133,12 +136,95 @@ async function saturday() {
   await createPost(post, "Shuffle Saturday");
 }
 
-async function randomPost() {
+async function randomBlogspotPost() {
 	const posts = await readBlogspotRSS();
 	const randomNumber = Math.floor(Math.random() * posts.length);
 	const post = posts[randomNumber];
-  await createPost(post);
+  // console.log(post);
+  await createPost(post, "Testing... random post.");
 }
+async function randomWordpressPost() {
+	const posts = await readWordpressAPI();
+	const randomNumber = Math.floor(Math.random() * posts.length);
+	const post = posts[randomNumber];
+  // console.log(post);
+  await createPost(await castWordpressAsBlogger(post), "Testing... random post.");
+}
+
+const he = require("he");
+// helper to strip tags and decode entities
+function cleanHTML(html) {
+  if (!html) return "";
+  // remove tags
+  const stripped = html.replace(/<[^>]*>?/gm, "");
+  // decode entities like &nbsp; &amp;
+  return he.decode(stripped);
+}
+
+async function castWordpressAsBlogger(wordpressPost) {
+  let post = {
+    link: wordpressPost.link,
+    title: cleanHTML(wordpressPost.title?.rendered),
+    contentSnippet: cleanHTML(wordpressPost.excerpt?.rendered)
+  };
+
+  console.log(post);
+
+  return post;
+}
+
+// async function createPost(post, text = "") { //accept post object
+//   // Validate and normalize title
+//   let postTitle = "";
+//   if (typeof post.title === "string") {
+//     postTitle = post.title || ""; //blogspot
+//   } else {
+//     postTitle = post.title?.rendered || ""; //wordpress
+//   }
+//   console.log(postTitle);
+
+//   // Validate and normalize description
+//   let postDescription = "";
+//   if (typeof post.contentSnippet === "string") {
+//     postDescription = post.contentSnippet || post.content || ""; // blogspot
+//   } else {
+//     console.log(post.excerpt);
+//     postDescription = post.excerpt?.rendered || ""; // wordpress
+//   }
+//   console.log(postDescription);
+
+//     // Validate and normalize link
+//   let link = post.link?.trim() || "";
+//   if (!/^https?:\/\//i.test(link)) {
+//     link = `https://${link}`;
+//   }
+//   if (!link || link === "https://") {
+//     console.error("Invalid link for embed:", post);
+//     return;
+//   }
+//   console.log(link);
+
+//   await agent.login({
+//     identifier: process.env.BLUESKY_USERNAME,
+//     password: process.env.BLUESKY_PASSWORD,
+//   });
+
+//   await agent.post({
+//     text: text,
+//     embed: {
+//       $type: "app.bsky.embed.external",
+//       external: {
+//         uri: post.link,
+//         title: postTitle,
+//         description: postDescription,
+//         // Optional: add a thumbnail if provided
+//         ...(post.thumb && { thumb: post.thumb })
+//       },
+//     },
+//   });
+
+//   console.log("Just posted with rich embed!");
+// }
 
 async function createPost(post, text = "") { //accept post object
     // Validate and normalize link
@@ -209,13 +295,36 @@ async function readBlogspotRSS(label = "") {
 		iter += page;
 	}
 
-	posts.forEach((post, index) => {
-	  //print title and date for each post found
-	  console.log(`${index + 1}. Title: ${post.title}`);
-	  console.log(`   Published: ${post.pubDate}`);
-	});
+	// posts.forEach((post, index) => {
+	//   //print title and date for each post found
+	//   console.log(`${index + 1}. Title: ${post.title}`);
+	//   console.log(`   Published: ${post.pubDate}`);
+	// });
 
 	return posts;
+}
+
+async function readWordpressAPI() {
+  let posts = [];
+  let page = 1;
+  const perPage = 100; // max allowed per_page is 100
+
+  console.log(`Reading WordPress API...`)
+
+  while (true) {
+    const res = await fetch(
+      `https://public-api.wordpress.com/wp/v2/sites/jakehennett.wordpress.com/posts?per_page=${perPage}&page=${page}`
+    );
+    if (!res.ok) break;
+    const data = await res.json();
+    if (data.length === 0) break;
+
+    posts.push(...data);
+    page++;
+  }
+
+  console.log(`Fetched ${posts.length} posts total`);
+  return posts;
 }
 
 // example use of buildFacets helper function:
@@ -263,7 +372,11 @@ function buildFacets(text) {
 
 // wednesday(); //test wednesday logic
 // readBlogspotRSS();  //uncomment to fetch list of all posts
-// randomPost(); //uncomment this to post a random post
+// readWordpressAPI();
+// randomBlogspotPost(); //uncomment this to post a random post
+// friday();
+// randomWordpressPost();
+// randomBlogspotPost();
 // readBlogspotRSS("Thirsty%20Thursday");
 // thursday(); //test thursday
 // tuesday(); //test tuesday
@@ -271,7 +384,7 @@ function buildFacets(text) {
 const scheduleExpressionMinute = "* * * * *"; // Run once every minute for testing
 const scheduleExpression = "0 */3 * * *"; // Run once every three hours in prod
 const mondayScheduleExpression = "30 8 * * 1"; // Run Monday at 8:30am
-const tuesdayScheduleExpression = "30 8 * * 1"; // Run Tuesday at 8:30am
+const tuesdayScheduleExpression = "30 8 * * 2"; // Run Tuesday at 8:30am
 const wednesdayScheduleExpression = "30 8 * * 3"; // Run Wednesday at 8:30am
 const thursdayScheduleExpression = "30 15 * * 4"; // Run Thursday at 3:30pm
 const fridayScheduleExpression = "30 9 * * 5"; // Run Friday at 9:30am
@@ -280,10 +393,7 @@ const scheduleExpressionNoonDaily = "0 12 * * *"; // Run every day at noon
 
 const monday_job = new cron_1.CronJob(mondayScheduleExpression, monday);
 const tuesday_job = new cron_1.CronJob(tuesdayScheduleExpression, tuesday);
-const wednesday_job = new cron_1.CronJob(
-	wednesdayScheduleExpression,
-	wednesday
-);
+const wednesday_job = new cron_1.CronJob(wednesdayScheduleExpression, wednesday);
 const thursday_job = new cron_1.CronJob(thursdayScheduleExpression, thursday);
 const friday_job = new cron_1.CronJob(fridayScheduleExpression, friday);
 const saturday_job = new cron_1.CronJob(saturdayScheduleExpression, saturday);
