@@ -124,7 +124,11 @@ async function thursday() {
   await createPost(post, "It's Thirsty Thursday!");
 }
 async function friday() {
-	// createPost("It's Friday!!");
+	const posts = await readWordpressAPI();
+	const randomNumber = Math.floor(Math.random() * posts.length);
+	const post = posts[randomNumber];
+  console.log(post);
+  // await createPost(post, "Flashback Friday");
 }
 async function saturday() {
 	const posts = await readBlogspotRSS();
@@ -133,10 +137,18 @@ async function saturday() {
   await createPost(post, "Shuffle Saturday");
 }
 
-async function randomPost() {
+async function randomBlogspotPost() {
 	const posts = await readBlogspotRSS();
 	const randomNumber = Math.floor(Math.random() * posts.length);
 	const post = posts[randomNumber];
+  console.log(post);
+  await createPost(post, "Testing... random post.");
+}
+async function randomWordpressPost() {
+	const posts = await readWordpressAPI();
+	const randomNumber = Math.floor(Math.random() * posts.length);
+	const post = posts[randomNumber];
+  console.log(post);
   await createPost(post, "Testing... random post.");
 }
 
@@ -223,6 +235,8 @@ async function readWordpressAPI() {
   let page = 1;
   const perPage = 100; // max allowed per_page is 100
 
+  console.log(`Reading WordPress API...`)
+
   while (true) {
     const res = await fetch(
       `https://public-api.wordpress.com/wp/v2/sites/jakehennett.wordpress.com/posts?per_page=${perPage}&page=${page}`
@@ -238,45 +252,6 @@ async function readWordpressAPI() {
   console.log(`Fetched ${posts.length} posts total`);
   return posts;
 }
-
-//wordpress
-async function readWordpressRSS() {
-	let iter = 2;
-	const page = 25;
-	let posts = [];
-	const parser = new rss_parser_1.default();
-
-	// get first post
-	const feed = await parser.parseURL(
-		`https://jakehennett.wordpress.com/feed/`
-	);
-	console.log("Got", feed.items.length, "items");
-	posts.push(...feed.items);
-
-	// get remaining posts
-	while (false) {
-    const rssURL = `https://jakehennett.wordpress.com/feed/`;
-		console.log("Fetching:", rssURL);
-
-		const feed = await parser.parseURL(rssURL);
-		console.log("Got", feed.items.length, "items");
-
-		if (feed.items.length === 0) break;
-
-		posts.push(...feed.items);
-
-		iter += page;
-	}
-
-	posts.forEach((post, index) => {
-	  //print title and date for each post found
-	  console.log(`${index + 1}. Title: ${post.title}`);
-	  console.log(`   Published: ${post.pubDate}`);
-	});
-
-	return posts;
-}
-//end wordpress rss
 
 // example use of buildFacets helper function:
 // const text = "Check out my new post! #BookReport #WordsOnWednesday";
@@ -323,9 +298,10 @@ function buildFacets(text) {
 
 // wednesday(); //test wednesday logic
 // readBlogspotRSS();  //uncomment to fetch list of all posts
-readWordpressRSS();
-readWordpressAPI();
-// randomPost(); //uncomment this to post a random post
+// readWordpressAPI();
+randomBlogspotPost(); //uncomment this to post a random post
+// randomWordpressPost();
+friday();
 // readBlogspotRSS("Thirsty%20Thursday");
 // thursday(); //test thursday
 // tuesday(); //test tuesday
@@ -352,6 +328,6 @@ const saturday_job = new cron_1.CronJob(saturdayScheduleExpression, saturday);
 tuesday_job.start();
 wednesday_job.start();
 thursday_job.start();
-// friday_job.start();
+friday_job.start();
 saturday_job.start();
 // daily_job.start();
