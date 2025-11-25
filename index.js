@@ -127,8 +127,7 @@ async function friday() {
 	const posts = await readWordpressAPI();
 	const randomNumber = Math.floor(Math.random() * posts.length);
 	const post = posts[randomNumber];
-  console.log(post);
-  // await createPost(post, "Flashback Friday");
+  await createPost(await castWordpressAsBlogger(post), "Flashback Friday");
 }
 async function saturday() {
 	const posts = await readBlogspotRSS();
@@ -376,8 +375,8 @@ function buildFacets(text) {
 // readWordpressAPI();
 // randomBlogspotPost(); //uncomment this to post a random post
 // friday();
-randomWordpressPost();
-randomBlogspotPost();
+// randomWordpressPost();
+// randomBlogspotPost();
 // readBlogspotRSS("Thirsty%20Thursday");
 // thursday(); //test thursday
 // tuesday(); //test tuesday
