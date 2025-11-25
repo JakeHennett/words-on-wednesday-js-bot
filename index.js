@@ -109,24 +109,25 @@ async function wednesday() {
 
 	if (postDate > oneDayAgo) {
 		console.log("Post is from within the last day");
+    await createPost(post);
 
-		// Validate and normalize link
-		let link = post.link?.trim() || "";
-		if (!/^https?:\/\//i.test(link)) {
-			link = `https://${link}`;
-		}
+		// // Validate and normalize link
+		// let link = post.link?.trim() || "";
+		// if (!/^https?:\/\//i.test(link)) {
+		// 	link = `https://${link}`;
+		// }
 
-		// If link is still invalid, bail out
-		if (!link || link === "https://") {
-			console.error("Invalid link for embed:", post);
-			return;
-		}
+		// // If link is still invalid, bail out
+		// if (!link || link === "https://") {
+		// 	console.error("Invalid link for embed:", post);
+		// 	return;
+		// }
 
-		const postText = post.title;
-		const description =
-			post.contentSnippet || post.content || "Read more on the blog";
+		// const postText = post.title;
+		// const description =
+		// 	post.contentSnippet || post.content || "Read more on the blog";
 
-		await createPost(postText, link, post.title, description);
+		// await createPost(postText, link, post.title, description);
 	} else {
 		// createPost("Words on Wednesday!!");
 		console.log("Older than 1 day");
@@ -146,36 +147,37 @@ async function daily() {
 	const posts = await readBlogspotRSS();
 	const randomNumber = Math.floor(Math.random() * posts.length);
 	const post = posts[randomNumber];
+  await createPost(post);
 
-	// Validate and normalize link
-	let link = post.link?.trim() || "";
-	if (!/^https?:\/\//i.test(link)) {
-		link = `https://${link}`;
-	}
+	// // Validate and normalize link
+	// let link = post.link?.trim() || "";
+	// if (!/^https?:\/\//i.test(link)) {
+	// 	link = `https://${link}`;
+	// }
 
-	// If link is still invalid, bail out
-	if (!link || link === "https://") {
-		console.error("Invalid link for embed:", post);
-		return;
-	}
+	// // If link is still invalid, bail out
+	// if (!link || link === "https://") {
+	// 	console.error("Invalid link for embed:", post);
+	// 	return;
+	// }
 
-	const postText = post.title;
-	const description =
-		post.contentSnippet || post.content || "Read more on the blog";
+	// const postText = post.title;
+	// const description =
+	// 	post.contentSnippet || post.content || "Read more on the blog";
 
-	await createPost(postText, link, post.title, description);
+	// await createPost(postText, link, post.title, description);
 }
 
-async function createPost(postText) { //accept post text only
-	await agent.login({
-		identifier: process.env.BLUESKY_USERNAME,
-		password: process.env.BLUESKY_PASSWORD,
-	});
-	await agent.post({
-		text: postText,
-	});
-	console.log("Just posted!");
-}
+// async function createPost(postText) { //accept post text only
+// 	await agent.login({
+// 		identifier: process.env.BLUESKY_USERNAME,
+// 		password: process.env.BLUESKY_PASSWORD,
+// 	});
+// 	await agent.post({
+// 		text: postText,
+// 	});
+// 	console.log("Just posted!");
+// }
 
 async function createPost(postText, postLink, postTitle, postDescription) { //accept specific post fields
 	await agent.login({
@@ -201,19 +203,34 @@ async function createPost(postText, postLink, postTitle, postDescription) { //ac
 }
 
 async function createPost(post) { //accept post object
+    // Validate and normalize link
+  let link = post.link?.trim() || "";
+  if (!/^https?:\/\//i.test(link)) {
+    link = `https://${link}`;
+  }
+
+  if (!link || link === "https://") {
+    console.error("Invalid link for embed:", post);
+    return;
+  }
+
+  const postText = post.title;
+  // const description =
+  //   post.contentSnippet || post.content || "Read more on the blog";
+
   await agent.login({
     identifier: process.env.BLUESKY_USERNAME,
     password: process.env.BLUESKY_PASSWORD,
   });
 
   await agent.post({
-    text: post.text,
+    text: postText,
     embed: {
       $type: "app.bsky.embed.external",
       external: {
         uri: post.link,
         title: post.title,
-        description: post.description || "Read more on the blog",
+        description: post.contentSnippet || post.content || "Read more on the blog",
         // Optional: add a thumbnail if provided
         ...(post.thumb && { thumb: post.thumb })
       },
@@ -262,7 +279,7 @@ async function readBlogspotRSS() {
 
 // wednesday(); //test wednesday logic
 // readBlogspotRSS();  //uncomment to fetch list of all posts
-// daily(); //uncomment this to post a random post
+daily(); //uncomment this to post a random post
 // Run this on a cron job
 const scheduleExpressionMinute = "* * * * *"; // Run once every minute for testing
 const scheduleExpression = "0 */3 * * *"; // Run once every three hours in prod
