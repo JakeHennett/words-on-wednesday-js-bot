@@ -137,7 +137,7 @@ async function randomPost() {
 	const posts = await readBlogspotRSS();
 	const randomNumber = Math.floor(Math.random() * posts.length);
 	const post = posts[randomNumber];
-  await createPost(post);
+  await createPost(post, "Testing... random post.");
 }
 
 async function createPost(post, text = "") { //accept post object
@@ -280,10 +280,7 @@ const scheduleExpressionNoonDaily = "0 12 * * *"; // Run every day at noon
 
 const monday_job = new cron_1.CronJob(mondayScheduleExpression, monday);
 const tuesday_job = new cron_1.CronJob(tuesdayScheduleExpression, tuesday);
-const wednesday_job = new cron_1.CronJob(
-	wednesdayScheduleExpression,
-	wednesday
-);
+const wednesday_job = new cron_1.CronJob(wednesdayScheduleExpression, wednesday);
 const thursday_job = new cron_1.CronJob(thursdayScheduleExpression, thursday);
 const friday_job = new cron_1.CronJob(fridayScheduleExpression, friday);
 const saturday_job = new cron_1.CronJob(saturdayScheduleExpression, saturday);
