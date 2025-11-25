@@ -251,23 +251,27 @@ async function readBlogspotRSS(label = "") {
 // readBlogspotRSS();  //uncomment to fetch list of all posts
 // randomPost(); //uncomment this to post a random post
 // readBlogspotRSS("Thirsty%20Thursday");
+thursday(); //test thursday
 
 const scheduleExpressionMinute = "* * * * *"; // Run once every minute for testing
 const scheduleExpression = "0 */3 * * *"; // Run once every three hours in prod
 const wednesdayScheduleExpression = "30 8 * * 3"; // Run Wednesday at 8:30am
+const thursdayScheduleExpression = "30 15 * * 4"; // Run Thursday at 3:30pm
 const fridayScheduleExpression = "30 9 * * 5"; // Run Friday at 9:30am
-const saturdayScheduleExpression = "0 11 * * 6"
+const saturdayScheduleExpression = "0 11 * * 6" // Run Saturday at 11am
 const scheduleExpressionNoonDaily = "0 12 * * *"; // Run every day at noon
 // const job = new CronJob(scheduleExpression, main); // change to scheduleExpressionMinute for testing
 const wednesday_job = new cron_1.CronJob(
 	wednesdayScheduleExpression,
 	wednesday
 );
+const thursday_job = new cron_1.CronJob(thursdayScheduleExpression, thursday)
 const friday_job = new cron_1.CronJob(fridayScheduleExpression, friday);
 const saturday_job = new cron_1.CronJob(saturdayScheduleExpression, saturday)
 // const daily_job = new cron_1.CronJob(scheduleExpressionNoonDaily, daily);
 // job.start();
 wednesday_job.start();
+thursday_job.start();
 friday_job.start();
 saturday_job.start();
 // daily_job.start();
