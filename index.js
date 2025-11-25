@@ -166,7 +166,7 @@ async function daily() {
 	await createPost(postText, link, post.title, description);
 }
 
-async function createPost(postText) {
+async function createPost(postText) { //accept post text only
 	await agent.login({
 		identifier: process.env.BLUESKY_USERNAME,
 		password: process.env.BLUESKY_PASSWORD,
@@ -177,7 +177,7 @@ async function createPost(postText) {
 	console.log("Just posted!");
 }
 
-async function createPost(postText, postLink, postTitle, postDescription) {
+async function createPost(postText, postLink, postTitle, postDescription) { //accept specific post fields
 	await agent.login({
 		identifier: process.env.BLUESKY_USERNAME,
 		password: process.env.BLUESKY_PASSWORD,
@@ -198,6 +198,29 @@ async function createPost(postText, postLink, postTitle, postDescription) {
 	});
 
 	console.log("Just posted with rich embed!");
+}
+
+async function createPost(post) { //accept post object
+  await agent.login({
+    identifier: process.env.BLUESKY_USERNAME,
+    password: process.env.BLUESKY_PASSWORD,
+  });
+
+  await agent.post({
+    text: post.text,
+    embed: {
+      $type: "app.bsky.embed.external",
+      external: {
+        uri: post.link,
+        title: post.title,
+        description: post.description || "Read more on the blog",
+        // Optional: add a thumbnail if provided
+        ...(post.thumb && { thumb: post.thumb })
+      },
+    },
+  });
+
+  console.log("Just posted with rich embed!");
 }
 
 async function readBlogspotRSS() {
