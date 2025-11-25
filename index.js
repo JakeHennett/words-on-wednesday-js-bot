@@ -102,12 +102,6 @@ async function wednesday() {
 
   if (postDate > oneDayAgo) {
     console.log("Post is from within the last day");
-  }
-  else
-  {
-    // createPost("Words on Wednesday!!");
-    console.log("Older than 1 day");
-  }
 
   // Validate and normalize link
   let link = post.link?.trim() || "";
@@ -125,7 +119,13 @@ async function wednesday() {
   const description =
     post.contentSnippet || post.content || "Read more on the blog";
 
-  // await createPost(postText, link, post.title, description); //uncomment to actually make the post
+    await createPost(postText, link, post.title, description); //uncomment to actually make the post
+  }
+  else
+  {
+    // createPost("Words on Wednesday!!");
+    console.log("Older than 1 day");
+  }
 }
 async function thursday() {
   createPost("Throwback Thursday!!");
