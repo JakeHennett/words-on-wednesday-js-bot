@@ -218,6 +218,49 @@ async function readBlogspotRSS(label = "") {
 	return posts;
 }
 
+// example use of buildFacets helper function:
+// const text = "Check out my new post! #BookReport #WordsOnWednesday";
+// const facets = buildFacets(text);
+
+// await agent.post({
+//   text,
+//   facets,
+//   embed: {
+//     $type: "app.bsky.embed.external",
+//     external: {
+//       uri: post.link,
+//       title: post.title,
+//       description: post.contentSnippet || post.content || "Read more on the blog",
+//       ...(post.thumb && { thumb: post.thumb }),
+//     },
+//   },
+// });
+
+// end example
+
+function buildFacets(text) {
+  const facets = [];
+  const hashtagRegex = /#[\p{L}\p{N}_]+/gu; // matches hashtags with letters/numbers/underscore
+
+  let match;
+  while ((match = hashtagRegex.exec(text)) !== null) {
+    facets.push({
+      index: {
+        byteStart: match.index,
+        byteEnd: match.index + match[0].length,
+      },
+      features: [
+        {
+          $type: "app.bsky.richtext.facet#tag",
+          tag: match[0].slice(1), // remove the '#' symbol
+        },
+      ],
+    });
+  }
+
+  return facets;
+}
+
 // wednesday(); //test wednesday logic
 // readBlogspotRSS();  //uncomment to fetch list of all posts
 // randomPost(); //uncomment this to post a random post
