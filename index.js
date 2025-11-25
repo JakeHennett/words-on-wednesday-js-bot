@@ -118,12 +118,6 @@ async function saturday() {
 
 async function daily() {
   const posts = await readBlogspotRSS();
-  // const posts = await readBlogspotJSON();
-  posts.forEach((post, index) => {
-    //print title and date for each post found
-    console.log(`${index + 1}. Title: ${post.title}`);
-    console.log(`   Published: ${post.pubDate}`);
-  });
   const randomNumber = Math.floor(Math.random() * posts.length);
   const post = posts[randomNumber];
 
@@ -208,11 +202,17 @@ async function readBlogspotRSS() {
 
     iter += page;
   }
+  
+  posts.forEach((post, index) => {
+    //print title and date for each post found
+    console.log(`${index + 1}. Title: ${post.title}`);
+    console.log(`   Published: ${post.pubDate}`);
+  });
 
   return posts;
 }
 
-// readBlogspotRSS();
+readBlogspotRSS();  //uncomment to fetch list of all posts
 // daily(); //uncomment this to post a random post
 // Run this on a cron job
 const scheduleExpressionMinute = "* * * * *"; // Run once every minute for testing
