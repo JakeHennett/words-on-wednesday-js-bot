@@ -94,11 +94,20 @@ async function tuesday() {
   createPost("");
 }
 async function wednesday() {
-  // createPost("Words on Wednesday!!");
-  
   const posts = await readBlogspotRSS();
-  // const randomNumber = Math.floor(Math.random() * posts.length);
-  // const post = posts[randomNumber];
+  const post = posts[0];  //grab newest post
+  console.log(post.pubDate);
+  const oneDayAgo = Date.now() - 24 * 60 * 60 * 1000; // milliseconds in one day
+  const postDate = new Date(post.pubDate).getTime(); // convert to timestamp
+
+  if (postDate > oneDayAgo) {
+    console.log("Post is from within the last day");
+  }
+  else
+  {
+    // createPost("Words on Wednesday!!");
+    console.log("Older than 1 day");
+  }
 
   // Validate and normalize link
   let link = post.link?.trim() || "";
@@ -116,7 +125,7 @@ async function wednesday() {
   const description =
     post.contentSnippet || post.content || "Read more on the blog";
 
-  await createPost(postText, link, post.title, description);
+  // await createPost(postText, link, post.title, description); //uncomment to actually make the post
 }
 async function thursday() {
   createPost("Throwback Thursday!!");
@@ -225,16 +234,17 @@ async function readBlogspotRSS() {
     iter += page;
   }
   
-  posts.forEach((post, index) => {
-    //print title and date for each post found
-    console.log(`${index + 1}. Title: ${post.title}`);
-    console.log(`   Published: ${post.pubDate}`);
-  });
+  // posts.forEach((post, index) => {
+  //   //print title and date for each post found
+  //   console.log(`${index + 1}. Title: ${post.title}`);
+  //   console.log(`   Published: ${post.pubDate}`);
+  // });
 
   return posts;
 }
 
-readBlogspotRSS();  //uncomment to fetch list of all posts
+wednesday(); //test wednesday logic
+// readBlogspotRSS();  //uncomment to fetch list of all posts
 // daily(); //uncomment this to post a random post
 // Run this on a cron job
 const scheduleExpressionMinute = "* * * * *"; // Run once every minute for testing
