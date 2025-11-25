@@ -94,7 +94,29 @@ async function tuesday() {
   createPost("");
 }
 async function wednesday() {
-  createPost("Words on Wednesday!!");
+  // createPost("Words on Wednesday!!");
+  
+  const posts = await readBlogspotRSS();
+  // const randomNumber = Math.floor(Math.random() * posts.length);
+  // const post = posts[randomNumber];
+
+  // Validate and normalize link
+  let link = post.link?.trim() || "";
+  if (!/^https?:\/\//i.test(link)) {
+    link = `https://${link}`;
+  }
+
+  // If link is still invalid, bail out
+  if (!link || link === "https://") {
+    console.error("Invalid link for embed:", post);
+    return;
+  }
+
+  const postText = post.title;
+  const description =
+    post.contentSnippet || post.content || "Read more on the blog";
+
+  await createPost(postText, link, post.title, description);
 }
 async function thursday() {
   createPost("Throwback Thursday!!");
