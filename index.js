@@ -118,7 +118,7 @@ async function thursday() {
   const posts = await readBlogspotRSS("Thirsty%20Thursday");
 	const randomNumber = Math.floor(Math.random() * posts.length);
 	const post = posts[randomNumber];
-  await createPost(post);
+  await createPost(post, "It's Thirsty Thursday!");
 }
 async function friday() {
 	// createPost("It's Friday!!");
@@ -134,7 +134,7 @@ async function randomPost() {
   await createPost(post);
 }
 
-async function createPost(post) { //accept post object
+async function createPost(post, text = "") { //accept post object
     // Validate and normalize link
   let link = post.link?.trim() || "";
   if (!/^https?:\/\//i.test(link)) {
@@ -152,7 +152,7 @@ async function createPost(post) { //accept post object
   });
 
   await agent.post({
-    text: "",
+    text: text,
     embed: {
       $type: "app.bsky.embed.external",
       external: {
@@ -216,7 +216,7 @@ async function readBlogspotRSS(label = "") {
 // readBlogspotRSS();  //uncomment to fetch list of all posts
 // randomPost(); //uncomment this to post a random post
 // readBlogspotRSS("Thirsty%20Thursday");
-thursday(); //test thursday
+// thursday(); //test thursday
 
 const scheduleExpressionMinute = "* * * * *"; // Run once every minute for testing
 const scheduleExpression = "0 */3 * * *"; // Run once every three hours in prod
