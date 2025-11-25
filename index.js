@@ -152,11 +152,21 @@ async function randomWordpressPost() {
   await createPost(await castWordpressAsBlogger(post), "Testing... random post.");
 }
 
+const he = require("he");
+// helper to strip tags and decode entities
+function cleanHTML(html) {
+  if (!html) return "";
+  // remove tags
+  const stripped = html.replace(/<[^>]*>?/gm, "");
+  // decode entities like &nbsp; &amp;
+  return he.decode(stripped);
+}
+
 async function castWordpressAsBlogger(wordpressPost) {
   let post = {
     link: wordpressPost.link,
-    title: wordpressPost.title?.rendered || "",
-    contentSnippet: wordpressPost.excerpt?.rendered || ""
+    title: cleanHTML(wordpressPost.title?.rendered),
+    contentSnippet: cleanHTML(wordpressPost.excerpt?.rendered)
   };
 
   console.log(post);
