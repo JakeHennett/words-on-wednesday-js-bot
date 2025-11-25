@@ -141,16 +141,117 @@ async function randomBlogspotPost() {
 	const posts = await readBlogspotRSS();
 	const randomNumber = Math.floor(Math.random() * posts.length);
 	const post = posts[randomNumber];
-  console.log(post);
+  // console.log(post);
   await createPost(post, "Testing... random post.");
 }
 async function randomWordpressPost() {
 	const posts = await readWordpressAPI();
 	const randomNumber = Math.floor(Math.random() * posts.length);
 	const post = posts[randomNumber];
-  console.log(post);
-  await createPost(post, "Testing... random post.");
+  // console.log(post);
+  await createPost(await castWordpressAsBlogger(post), "Testing... random post.");
 }
+
+async function castWordpressAsBlogger(wordpressPost) {
+  // // Validate and normalize title
+  // let postTitle = "";
+  // if (typeof post.title === "string") {
+  //   postTitle = post.title || ""; //blogspot
+  // } else {
+  //   postTitle = post.title?.rendered || ""; //wordpress
+  // }
+  // console.log(postTitle);
+
+  // // Validate and normalize description
+  // let postDescription = "";
+  // if (typeof post.contentSnippet === "string") {
+  //   postDescription = post.contentSnippet || post.content || ""; // blogspot
+  // } else {
+  //   console.log(post.excerpt);
+  //   postDescription = post.excerpt?.rendered || ""; // wordpress
+  // }
+  // console.log(postDescription);
+
+  //   // Validate and normalize link
+  // let link = post.link?.trim() || "";
+  // if (!/^https?:\/\//i.test(link)) {
+  //   link = `https://${link}`;
+  // }
+  // if (!link || link === "https://") {
+  //   console.error("Invalid link for embed:", post);
+  //   return;
+  // }
+  // console.log(link);
+
+  
+        // uri: post.link,
+        // title: post.title,
+        // description: post.contentSnippet || post.content || "Read more on the blog",
+
+  let post = {
+    link: wordpressPost.link,
+    title: wordpressPost.title?.rendered || "",
+    contentSnippet: wordpressPost.excerpt?.rendered || "",
+    // content: ""
+  };
+
+  console.log(post);
+
+  return post;
+}
+
+// async function createPost(post, text = "") { //accept post object
+//   // Validate and normalize title
+//   let postTitle = "";
+//   if (typeof post.title === "string") {
+//     postTitle = post.title || ""; //blogspot
+//   } else {
+//     postTitle = post.title?.rendered || ""; //wordpress
+//   }
+//   console.log(postTitle);
+
+//   // Validate and normalize description
+//   let postDescription = "";
+//   if (typeof post.contentSnippet === "string") {
+//     postDescription = post.contentSnippet || post.content || ""; // blogspot
+//   } else {
+//     console.log(post.excerpt);
+//     postDescription = post.excerpt?.rendered || ""; // wordpress
+//   }
+//   console.log(postDescription);
+
+//     // Validate and normalize link
+//   let link = post.link?.trim() || "";
+//   if (!/^https?:\/\//i.test(link)) {
+//     link = `https://${link}`;
+//   }
+//   if (!link || link === "https://") {
+//     console.error("Invalid link for embed:", post);
+//     return;
+//   }
+//   console.log(link);
+
+//   await agent.login({
+//     identifier: process.env.BLUESKY_USERNAME,
+//     password: process.env.BLUESKY_PASSWORD,
+//   });
+
+//   await agent.post({
+//     text: text,
+//     embed: {
+//       $type: "app.bsky.embed.external",
+//       external: {
+//         uri: post.link,
+//         title: postTitle,
+//         description: postDescription,
+//         // Optional: add a thumbnail if provided
+//         ...(post.thumb && { thumb: post.thumb })
+//       },
+//     },
+//   });
+
+//   console.log("Just posted with rich embed!");
+// }
 
 async function createPost(post, text = "") { //accept post object
     // Validate and normalize link
@@ -221,11 +322,11 @@ async function readBlogspotRSS(label = "") {
 		iter += page;
 	}
 
-	posts.forEach((post, index) => {
-	  //print title and date for each post found
-	  console.log(`${index + 1}. Title: ${post.title}`);
-	  console.log(`   Published: ${post.pubDate}`);
-	});
+	// posts.forEach((post, index) => {
+	//   //print title and date for each post found
+	//   console.log(`${index + 1}. Title: ${post.title}`);
+	//   console.log(`   Published: ${post.pubDate}`);
+	// });
 
 	return posts;
 }
@@ -299,9 +400,10 @@ function buildFacets(text) {
 // wednesday(); //test wednesday logic
 // readBlogspotRSS();  //uncomment to fetch list of all posts
 // readWordpressAPI();
-randomBlogspotPost(); //uncomment this to post a random post
-// randomWordpressPost();
-friday();
+// randomBlogspotPost(); //uncomment this to post a random post
+// friday();
+randomWordpressPost();
+randomBlogspotPost();
 // readBlogspotRSS("Thirsty%20Thursday");
 // thursday(); //test thursday
 // tuesday(); //test tuesday
