@@ -10,9 +10,11 @@ This folder contains a starter template for creating a bot on Bluesky. In this e
 4. Compile your project by running: `npx tsc` or activate watch mode to have your code automatically compile: `npx tsc -w`
 
 ## Running the script 
-1. You can run the script locally: `node index.js`. You should see a smiley emoji posted to your Bluesky account. 
-2. Modify the script however you like to make this bot your own! 
+1. You can run the script locally: `node index.js`.
 
 ## Deploying your bot
 1. You can deploy a simple bot for free or low cost on a variety of platforms. For example, check out [Heroku](https://devcenter.heroku.com/articles/github-integration) or [Fly.io](https://fly.io/docs/reference/fly-launch/).
 
+## Build exe
+To build an exe file to run locally, run this command:
+npx pkg index.js --targets node18-win-x64
