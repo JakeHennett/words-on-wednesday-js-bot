@@ -126,7 +126,7 @@ async function wednesday() {
 		const description =
 			post.contentSnippet || post.content || "Read more on the blog";
 
-		await createPost(postText, link, post.title, description); //uncomment to actually make the post
+		await createPost(postText, link, post.title, description);
 	} else {
 		// createPost("Words on Wednesday!!");
 		console.log("Older than 1 day");
@@ -201,8 +201,7 @@ async function createPost(postText, postLink, postTitle, postDescription) {
 }
 
 async function readBlogspotRSS() {
-	let iter = 2; // must start at 1
-	// if we iter from 2, do we get all 25 recs?
+	let iter = 2;
 	const page = 25;
 	let posts = [];
 	const parser = new rss_parser_1.default();
