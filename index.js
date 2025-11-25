@@ -121,7 +121,7 @@ async function thursday() {
   const posts = await readBlogspotRSS("Thirsty%20Thursday");
 	const randomNumber = Math.floor(Math.random() * posts.length);
 	const post = posts[randomNumber];
-  await createPost(post, "It's Thirsty Thursday!");
+  await createPost(post, "Thirsty Thursday");
 }
 async function friday() {
 	const posts = await readWordpressAPI();
