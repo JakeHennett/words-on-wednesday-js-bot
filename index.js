@@ -93,13 +93,13 @@ const agent = new api_1.BskyAgent({
   Friday - WordPress post
   */
 async function sunday() {
-	createPost("");
+	// createPost("");
 }
 async function monday() {
-	createPost("Modern Monday!");
+	// createPost("Modern Monday!");
 }
 async function tuesday() {
-	createPost("");
+	// createPost("");
 }
 async function wednesday() {
 	const posts = await readBlogspotRSS();
@@ -111,7 +111,6 @@ async function wednesday() {
 		console.log("Post is from within the last day");
     await createPost(post);
 	} else {
-		// createPost("Words on Wednesday!!");
 		console.log("Older than 1 day");
 	}
 }
@@ -122,7 +121,7 @@ async function thursday() {
   await createPost(post);
 }
 async function friday() {
-	createPost("It's Friday!!");
+	// createPost("It's Friday!!");
 }
 async function saturday() {
 	randomPost();
@@ -133,40 +132,6 @@ async function randomPost() {
 	const randomNumber = Math.floor(Math.random() * posts.length);
 	const post = posts[randomNumber];
   await createPost(post);
-}
-
-// async function createPost(postText) { //accept post text only
-// 	await agent.login({
-// 		identifier: process.env.BLUESKY_USERNAME,
-// 		password: process.env.BLUESKY_PASSWORD,
-// 	});
-// 	await agent.post({
-// 		text: postText,
-// 	});
-// 	console.log("Just posted!");
-// }
-
-async function createPost(postText, postLink, postTitle, postDescription) { //accept specific post fields
-	await agent.login({
-		identifier: process.env.BLUESKY_USERNAME,
-		password: process.env.BLUESKY_PASSWORD,
-	});
-
-	await agent.post({
-		text: postText,
-		embed: {
-			$type: "app.bsky.embed.external",
-			external: {
-				uri: postLink,
-				title: postTitle,
-				description: postDescription || "Read more on the blog",
-				// Optional: add a thumbnail if you have one
-				// thumb: "https://your-image-url.com/image.jpg"
-			},
-		},
-	});
-
-	console.log("Just posted with rich embed!");
 }
 
 async function createPost(post) { //accept post object
