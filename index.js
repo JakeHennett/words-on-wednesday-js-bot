@@ -76,10 +76,11 @@ const rss_parser_1 = __importDefault(require("rss-parser"));
 // const { fetchMetadata } = require("./metadata");
 dotenv.config();
 //TODO:
-// turn post into working link
-// filter to given date range
+// read tags in rss scrape (thirsty thursday eve, etc)
+// add images to preview
 // integrate with wordpress
 // Add to README npx tsc / node index.js
+
 // Create a Bluesky Agent
 const agent = new api_1.BskyAgent({
 	service: "https://bsky.social",
@@ -110,24 +111,6 @@ async function wednesday() {
 	if (postDate > oneDayAgo) {
 		console.log("Post is from within the last day");
     await createPost(post);
-
-		// // Validate and normalize link
-		// let link = post.link?.trim() || "";
-		// if (!/^https?:\/\//i.test(link)) {
-		// 	link = `https://${link}`;
-		// }
-
-		// // If link is still invalid, bail out
-		// if (!link || link === "https://") {
-		// 	console.error("Invalid link for embed:", post);
-		// 	return;
-		// }
-
-		// const postText = post.title;
-		// const description =
-		// 	post.contentSnippet || post.content || "Read more on the blog";
-
-		// await createPost(postText, link, post.title, description);
 	} else {
 		// createPost("Words on Wednesday!!");
 		console.log("Older than 1 day");
@@ -148,24 +131,6 @@ async function daily() {
 	const randomNumber = Math.floor(Math.random() * posts.length);
 	const post = posts[randomNumber];
   await createPost(post);
-
-	// // Validate and normalize link
-	// let link = post.link?.trim() || "";
-	// if (!/^https?:\/\//i.test(link)) {
-	// 	link = `https://${link}`;
-	// }
-
-	// // If link is still invalid, bail out
-	// if (!link || link === "https://") {
-	// 	console.error("Invalid link for embed:", post);
-	// 	return;
-	// }
-
-	// const postText = post.title;
-	// const description =
-	// 	post.contentSnippet || post.content || "Read more on the blog";
-
-	// await createPost(postText, link, post.title, description);
 }
 
 // async function createPost(postText) { //accept post text only
@@ -214,17 +179,13 @@ async function createPost(post) { //accept post object
     return;
   }
 
-  const postText = post.title;
-  // const description =
-  //   post.contentSnippet || post.content || "Read more on the blog";
-
   await agent.login({
     identifier: process.env.BLUESKY_USERNAME,
     password: process.env.BLUESKY_PASSWORD,
   });
 
   await agent.post({
-    text: postText,
+    text: "",
     embed: {
       $type: "app.bsky.embed.external",
       external: {
@@ -279,7 +240,7 @@ async function readBlogspotRSS() {
 
 // wednesday(); //test wednesday logic
 // readBlogspotRSS();  //uncomment to fetch list of all posts
-daily(); //uncomment this to post a random post
+// daily(); //uncomment this to post a random post
 // Run this on a cron job
 const scheduleExpressionMinute = "* * * * *"; // Run once every minute for testing
 const scheduleExpression = "0 */3 * * *"; // Run once every three hours in prod
