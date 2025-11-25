@@ -104,10 +104,9 @@ async function tuesday() {
 async function wednesday() {
 	const posts = await readBlogspotRSS();
 	const post = posts[0]; //grab newest post
-	console.log(post.pubDate);
+
 	const oneDayAgo = Date.now() - 24 * 60 * 60 * 1000; // milliseconds in one day
 	const postDate = new Date(post.pubDate).getTime(); // convert to timestamp
-
 	if (postDate > oneDayAgo) {
 		console.log("Post is from within the last day");
     await createPost(post);
@@ -117,16 +116,19 @@ async function wednesday() {
 	}
 }
 async function thursday() {
-	createPost("Throwback Thursday!!");
+  const posts = await readBlogspotRSS("Thirsty%20Thursday");
+	const randomNumber = Math.floor(Math.random() * posts.length);
+	const post = posts[randomNumber];
+  await createPost(post);
 }
 async function friday() {
 	createPost("It's Friday!!");
 }
 async function saturday() {
-	createPost("");
+	randomPost();
 }
 
-async function daily() {
+async function randomPost() {
 	const posts = await readBlogspotRSS();
 	const randomNumber = Math.floor(Math.random() * posts.length);
 	const post = posts[randomNumber];
@@ -201,22 +203,29 @@ async function createPost(post) { //accept post object
   console.log("Just posted with rich embed!");
 }
 
-async function readBlogspotRSS() {
+async function readBlogspotRSS(label = "") {
 	let iter = 2;
 	const page = 25;
+  let formattedLabel = "";
 	let posts = [];
 	const parser = new rss_parser_1.default();
 
+  //format optional label parameter
+  if (label.trim() !== "") {
+    formattedLabel = "/-/" + label;
+  }
+
 	// get first post
 	const feed = await parser.parseURL(
-		`https://jakehennett.blogspot.com/feeds/posts/default?max-results=1&start-index=1`
+		`https://jakehennett.blogspot.com/feeds/posts/default${formattedLabel}?max-results=1&start-index=1`
 	);
 	console.log("Got", feed.items.length, "items");
 	posts.push(...feed.items);
 
 	// get remaining posts
 	while (true) {
-		const rssURL = `https://jakehennett.blogspot.com/feeds/posts/default?max-results=${page}&start-index=${iter}`;
+		// const rssURL = `https://jakehennett.blogspot.com/feeds/posts/default?max-results=${page}&start-index=${iter}`;
+    const rssURL = `https://jakehennett.blogspot.com/feeds/posts/default${formattedLabel}?max-results=${page}&start-index=${iter}`;
 		console.log("Fetching:", rssURL);
 
 		const feed = await parser.parseURL(rssURL);
@@ -229,23 +238,25 @@ async function readBlogspotRSS() {
 		iter += page;
 	}
 
-	// posts.forEach((post, index) => {
-	//   //print title and date for each post found
-	//   console.log(`${index + 1}. Title: ${post.title}`);
-	//   console.log(`   Published: ${post.pubDate}`);
-	// });
+	posts.forEach((post, index) => {
+	  //print title and date for each post found
+	  console.log(`${index + 1}. Title: ${post.title}`);
+	  console.log(`   Published: ${post.pubDate}`);
+	});
 
 	return posts;
 }
 
 // wednesday(); //test wednesday logic
 // readBlogspotRSS();  //uncomment to fetch list of all posts
-// daily(); //uncomment this to post a random post
-// Run this on a cron job
+// randomPost(); //uncomment this to post a random post
+// readBlogspotRSS("Thirsty%20Thursday");
+
 const scheduleExpressionMinute = "* * * * *"; // Run once every minute for testing
 const scheduleExpression = "0 */3 * * *"; // Run once every three hours in prod
 const wednesdayScheduleExpression = "30 8 * * 3"; // Run Wednesday at 8:30am
 const fridayScheduleExpression = "30 9 * * 5"; // Run Friday at 9:30am
+const saturdayScheduleExpression = "0 11 * * 6"
 const scheduleExpressionNoonDaily = "0 12 * * *"; // Run every day at noon
 // const job = new CronJob(scheduleExpression, main); // change to scheduleExpressionMinute for testing
 const wednesday_job = new cron_1.CronJob(
@@ -253,8 +264,10 @@ const wednesday_job = new cron_1.CronJob(
 	wednesday
 );
 const friday_job = new cron_1.CronJob(fridayScheduleExpression, friday);
-const daily_job = new cron_1.CronJob(scheduleExpressionNoonDaily, daily);
+const saturday_job = new cron_1.CronJob(saturdayScheduleExpression, saturday)
+// const daily_job = new cron_1.CronJob(scheduleExpressionNoonDaily, daily);
 // job.start();
 wednesday_job.start();
 friday_job.start();
-daily_job.start();
+saturday_job.start();
+// daily_job.start();
