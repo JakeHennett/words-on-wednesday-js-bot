@@ -262,7 +262,7 @@ function buildFacets(text) {
 }
 
 // wednesday(); //test wednesday logic
-// readBlogspotRSS();  //uncomment to fetch list of all posts
+readBlogspotRSS();  //uncomment to fetch list of all posts
 // randomPost(); //uncomment this to post a random post
 // readBlogspotRSS("Thirsty%20Thursday");
 // thursday(); //test thursday
@@ -271,7 +271,7 @@ function buildFacets(text) {
 const scheduleExpressionMinute = "* * * * *"; // Run once every minute for testing
 const scheduleExpression = "0 */3 * * *"; // Run once every three hours in prod
 const mondayScheduleExpression = "30 8 * * 1"; // Run Monday at 8:30am
-const tuesdayScheduleExpression = "30 8 * * 1"; // Run Tuesday at 8:30am
+const tuesdayScheduleExpression = "30 8 * * 2"; // Run Tuesday at 8:30am
 const wednesdayScheduleExpression = "30 8 * * 3"; // Run Wednesday at 8:30am
 const thursdayScheduleExpression = "30 15 * * 4"; // Run Thursday at 3:30pm
 const fridayScheduleExpression = "30 9 * * 5"; // Run Friday at 9:30am
@@ -293,6 +293,6 @@ const saturday_job = new cron_1.CronJob(saturdayScheduleExpression, saturday);
 tuesday_job.start();
 wednesday_job.start();
 thursday_job.start();
-friday_job.start();
+// friday_job.start();
 saturday_job.start();
 // daily_job.start();
