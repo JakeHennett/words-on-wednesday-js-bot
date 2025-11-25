@@ -237,7 +237,7 @@ async function readBlogspotRSS() {
 	return posts;
 }
 
-wednesday(); //test wednesday logic
+// wednesday(); //test wednesday logic
 // readBlogspotRSS();  //uncomment to fetch list of all posts
 // daily(); //uncomment this to post a random post
 // Run this on a cron job
