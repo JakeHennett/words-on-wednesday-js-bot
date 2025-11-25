@@ -153,46 +153,10 @@ async function randomWordpressPost() {
 }
 
 async function castWordpressAsBlogger(wordpressPost) {
-  // // Validate and normalize title
-  // let postTitle = "";
-  // if (typeof post.title === "string") {
-  //   postTitle = post.title || ""; //blogspot
-  // } else {
-  //   postTitle = post.title?.rendered || ""; //wordpress
-  // }
-  // console.log(postTitle);
-
-  // // Validate and normalize description
-  // let postDescription = "";
-  // if (typeof post.contentSnippet === "string") {
-  //   postDescription = post.contentSnippet || post.content || ""; // blogspot
-  // } else {
-  //   console.log(post.excerpt);
-  //   postDescription = post.excerpt?.rendered || ""; // wordpress
-  // }
-  // console.log(postDescription);
-
-  //   // Validate and normalize link
-  // let link = post.link?.trim() || "";
-  // if (!/^https?:\/\//i.test(link)) {
-  //   link = `https://${link}`;
-  // }
-  // if (!link || link === "https://") {
-  //   console.error("Invalid link for embed:", post);
-  //   return;
-  // }
-  // console.log(link);
-
-  
-        // uri: post.link,
-        // title: post.title,
-        // description: post.contentSnippet || post.content || "Read more on the blog",
-
   let post = {
     link: wordpressPost.link,
     title: wordpressPost.title?.rendered || "",
-    contentSnippet: wordpressPost.excerpt?.rendered || "",
-    // content: ""
+    contentSnippet: wordpressPost.excerpt?.rendered || ""
   };
 
   console.log(post);
