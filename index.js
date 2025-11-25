@@ -180,37 +180,6 @@ async function createPost(postText, postLink, postTitle, postDescription) {
   console.log("Just posted with rich embed!");
 }
 
-const axios = require("axios");
-
-async function readBlogspotJSON() {
-  let iter = 1;
-  const page = 25;
-  let posts = [];
-
-  while (true) {
-    const rssURL = `https://jakehennett.blogspot.com/feeds/posts/default?alt=json&max-results=${page}&start-index=${iter}`;
-    console.log("Fetching:", rssURL);
-
-    const { data } = await axios.get(rssURL);
-
-    // Blogger JSON feed puts entries under feed.entry
-    const entries = data.feed?.entry || [];
-    if (entries.length === 0) break;
-
-    entries.forEach((entry) => {
-      posts.push({
-        title: entry.title?.$t,
-        link: entry.link?.find((l) => l.rel === "alternate")?.href,
-        pubDate: entry.published?.$t,
-      });
-    });
-
-    iter += page;
-  }
-
-  return posts;
-}
-
 async function readBlogspotRSS() {
   let iter = 2; // must start at 1
   // if we iter from 2, do we get all 25 recs?
@@ -244,7 +213,7 @@ async function readBlogspotRSS() {
 }
 
 // readBlogspotRSS();
-daily(); //uncomment this to post a random post
+// daily(); //uncomment this to post a random post
 // Run this on a cron job
 const scheduleExpressionMinute = "* * * * *"; // Run once every minute for testing
 const scheduleExpression = "0 */3 * * *"; // Run once every three hours in prod
