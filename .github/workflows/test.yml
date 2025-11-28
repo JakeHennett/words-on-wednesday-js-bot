@@ -24,4 +24,4 @@ jobs:
         env:
           BLUESKY_USERNAME: ${{ secrets.BLUESKY_USERNAME }}
           BLUESKY_PASSWORD: ${{ secrets.BLUESKY_PASSWORD }}
-        run: node -e "require('./index').randomBlogspotPost()"
+        run: node -e "require('./index').randomBlogspotPost().catch(console.error)"
