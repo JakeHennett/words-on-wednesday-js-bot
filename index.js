@@ -73,25 +73,14 @@ const dotenv = __importStar(require("dotenv"));
 const cron_1 = require("cron");
 const process = __importStar(require("process"));
 const rss_parser_1 = __importDefault(require("rss-parser"));
-// const { fetchMetadata } = require("./metadata");
 dotenv.config();
 //TODO:
-// read tags in rss scrape (thirsty thursday eve, etc)
 // add images to preview
-// integrate with wordpress
-// Add to README npx tsc / node index.js
 
 // Create a Bluesky Agent
 const agent = new api_1.BskyAgent({
 	service: "https://bsky.social",
 });
-/*
-  Modern Monday - posts between 1 year and 1 month ago
-  Tech Tuesday?
-  Words on Wednesday
-  Throwback Thursday - blogspot posts older than 1 year ago
-  Friday - WordPress post
-  */
 async function sunday() {
 	// createPost("");
 }
@@ -172,59 +161,6 @@ async function castWordpressAsBlogger(wordpressPost) {
 
   return post;
 }
-
-// async function createPost(post, text = "") { //accept post object
-//   // Validate and normalize title
-//   let postTitle = "";
-//   if (typeof post.title === "string") {
-//     postTitle = post.title || ""; //blogspot
-//   } else {
-//     postTitle = post.title?.rendered || ""; //wordpress
-//   }
-//   console.log(postTitle);
-
-//   // Validate and normalize description
-//   let postDescription = "";
-//   if (typeof post.contentSnippet === "string") {
-//     postDescription = post.contentSnippet || post.content || ""; // blogspot
-//   } else {
-//     console.log(post.excerpt);
-//     postDescription = post.excerpt?.rendered || ""; // wordpress
-//   }
-//   console.log(postDescription);
-
-//     // Validate and normalize link
-//   let link = post.link?.trim() || "";
-//   if (!/^https?:\/\//i.test(link)) {
-//     link = `https://${link}`;
-//   }
-//   if (!link || link === "https://") {
-//     console.error("Invalid link for embed:", post);
-//     return;
-//   }
-//   console.log(link);
-
-//   await agent.login({
-//     identifier: process.env.BLUESKY_USERNAME,
-//     password: process.env.BLUESKY_PASSWORD,
-//   });
-
-//   await agent.post({
-//     text: text,
-//     embed: {
-//       $type: "app.bsky.embed.external",
-//       external: {
-//         uri: post.link,
-//         title: postTitle,
-//         description: postDescription,
-//         // Optional: add a thumbnail if provided
-//         ...(post.thumb && { thumb: post.thumb })
-//       },
-//     },
-//   });
-
-//   console.log("Just posted with rich embed!");
-// }
 
 async function createPost(post, text = "") { //accept post object
     // Validate and normalize link
