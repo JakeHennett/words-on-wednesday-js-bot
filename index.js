@@ -312,7 +312,7 @@ function buildFacets(text) {
 // randomBlogspotPost(); //uncomment this to post a random post
 // friday();
 // randomWordpressPost();
-randomBlogspotPost();
+// randomBlogspotPost();
 // readBlogspotRSS("Thirsty%20Thursday");
 // thursday(); //test thursday
 // tuesday(); //test tuesday

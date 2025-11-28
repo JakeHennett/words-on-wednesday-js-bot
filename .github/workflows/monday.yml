@@ -1,0 +1,21 @@
+name: Bluesky Monday Post
+
+on:
+  schedule:
+    - cron: "30 8 * * 1" # Monday at 8:30am
+  workflow_dispatch:
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - run: npm install
+      - name: Run Monday job
+        env:
+          BLUESKY_USERNAME: ${{ secrets.BLUESKY_USERNAME }}
+          BLUESKY_PASSWORD: ${{ secrets.BLUESKY_PASSWORD }}
+        run: node -e "(async () => { await require('./index').monday(); })().catch(console.error)"
