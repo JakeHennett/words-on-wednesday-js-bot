@@ -342,3 +342,15 @@ thursday_job.start();
 friday_job.start();
 saturday_job.start();
 // daily_job.start();
+
+module.exports = {
+  sunday,
+  monday,
+  tuesday,
+  wednesday,
+  thursday,
+  friday,
+  saturday,
+  randomBlogspotPost,
+  randomWordpressPost
+};
