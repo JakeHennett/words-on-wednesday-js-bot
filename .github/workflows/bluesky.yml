@@ -1,0 +1,29 @@
+name: Bluesky Autoposter
+
+on:
+  schedule:
+    # Runs every 3 hours (adjust as needed)
+    - cron: "0 */3 * * *"
+  workflow_dispatch: # allow manual trigger
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run autoposter
+        env:
+          BLUESKY_USERNAME: ${{ secrets.BLUESKY_USERNAME }}
+          BLUESKY_PASSWORD: ${{ secrets.BLUESKY_PASSWORD }}
+        run: npm start
