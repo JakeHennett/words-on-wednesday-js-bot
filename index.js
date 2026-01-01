@@ -305,6 +305,21 @@ async function readWordpressAPI() {
 
 // end example
 
+async function uploadImage(url) {
+  try {
+    const res = await fetch(url);
+    const buffer = Buffer.from(await res.arrayBuffer());
+
+    const mimeType = res.headers.get("content-type") || "image/jpeg";
+
+    const blob = await agent.uploadBlob(buffer, { encoding: mimeType });
+    return blob;
+  } catch (err) {
+    console.error("Image upload failed:", err);
+    return null;
+  }
+}
+
 function extractFirstImage(html) {
   if (!html) return null;
   const match = html.match(/<img[^>]+src="([^">]+)"/i);
