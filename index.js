@@ -150,16 +150,26 @@ function cleanHTML(html) {
   return he.decode(stripped);
 }
 
+// async function castWordpressAsBlogger(wordpressPost) {
+//   let post = {
+//     link: wordpressPost.link,
+//     title: cleanHTML(wordpressPost.title?.rendered),
+//     contentSnippet: cleanHTML(wordpressPost.excerpt?.rendered)
+//   };
+//   console.log(post);
+//   return post;
+// }
+
 async function castWordpressAsBlogger(wordpressPost) {
-  let post = {
+  const html = wordpressPost.content?.rendered || "";
+  const image = wordpressPost.jetpack_featured_media_url || extractFirstImage(html);
+
+  return {
     link: wordpressPost.link,
     title: cleanHTML(wordpressPost.title?.rendered),
-    contentSnippet: cleanHTML(wordpressPost.excerpt?.rendered)
+    contentSnippet: cleanHTML(wordpressPost.excerpt?.rendered),
+    image
   };
-
-  console.log(post);
-
-  return post;
 }
 
 async function createPost(post, text = "") { //accept post object
