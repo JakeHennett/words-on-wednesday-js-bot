@@ -187,12 +187,12 @@ async function createPost(post, text = "") {
   // If the post has an image, upload & embed it
   if (post.image) {
     const blob = await uploadImage(post.image);
-    if (blob) {
+    if (blob?.data?.blob) {
       embed = {
         $type: "app.bsky.embed.images",
         images: [
           {
-            image: blob.blob,
+            image: blob.data.blob,
             alt: post.title || "Blog image"
           }
         ]
@@ -400,7 +400,7 @@ function buildFacets(text) {
 // wednesday(); //test wednesday logic
 // readBlogspotRSS();  //uncomment to fetch list of all posts
 // readWordpressAPI();
-// randomBlogspotPost(); //uncomment this to post a random post
+randomBlogspotPost(); //uncomment this to post a random post
 // friday();
 // randomWordpressPost();
 // randomBlogspotPost();
