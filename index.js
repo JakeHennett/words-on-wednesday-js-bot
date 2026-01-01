@@ -213,7 +213,13 @@ async function readBlogspotRSS(label = "") {
 		`https://jakehennett.blogspot.com/feeds/posts/default${formattedLabel}?max-results=1&start-index=1`
 	);
 	console.log("Got", feed.items.length, "items");
-	posts.push(...feed.items);
+	// posts.push(...feed.items);
+	posts.push(
+		...feed.items.map(item => ({
+			...item,
+			image: extractFirstImage(item["content:encoded"] || item.content)
+		}))
+	);
 
 	// get remaining posts
 	while (true) {
@@ -226,7 +232,13 @@ async function readBlogspotRSS(label = "") {
 
 		if (feed.items.length === 0) break;
 
-		posts.push(...feed.items);
+		// posts.push(...feed.items);
+		posts.push(
+			...feed.items.map(item => ({
+				...item,
+				image: extractFirstImage(item["content:encoded"] || item.content)
+			}))
+		);
 
 		iter += page;
 	}
