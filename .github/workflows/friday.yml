@@ -2,7 +2,7 @@ name: Bluesky Friday Post
 
 on:
   schedule:
-    - cron: "30 9 * * 5"
+    - cron: "30 14 * * 5"
   workflow_dispatch:
 
 jobs:
