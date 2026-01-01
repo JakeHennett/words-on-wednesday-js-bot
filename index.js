@@ -186,7 +186,7 @@ function safeSnippet(snippet, max = 200) {
   return snippet.slice(0, max - 1) + "…";
 }
 
-async function createPost(post, label = "") {
+async function createPostWithImage(post, label = "") {
   let link = post.link?.trim() || "";
   if (!/^https?:\/\//i.test(link)) link = `https://${link}`;
 
@@ -214,10 +214,10 @@ ${link}`.trim();
     // Trim everything except the link
     const withoutLink = trimGraphemes(
       `${label}\n${post.title}\n\n${snippet}`,
-      300 - (link.length + 1)
+      300 - (link.length + 2)
     );
 
-    trimmed = `${withoutLink}\n${link}`;
+    trimmed = `${withoutLink}\n\n${link}`;
   }
 
   let embed = null;
@@ -237,44 +237,50 @@ ${link}`.trim();
     }
   }
 
-  await agent.post({ text: trimmed, embed });
+  const postPayload = { text: trimmed };
+  if (embed && typeof embed === "object" && "$type" in embed) {
+	postPayload.embed = embed;}
+	await agent.post(postPayload);
+
+
+//   await agent.post({ text: trimmed, embed });
 
   console.log(`Posted ${post.title}`);
 }
 
-// async function createPost(post, text = "") { //accept post object
-//     // Validate and normalize link
-//   let link = post.link?.trim() || "";
-//   if (!/^https?:\/\//i.test(link)) {
-//     link = `https://${link}`;
-//   }
+async function createPost(post, text = "") { //accept post object
+    // Validate and normalize link
+  let link = post.link?.trim() || "";
+  if (!/^https?:\/\//i.test(link)) {
+    link = `https://${link}`;
+  }
 
-//   if (!link || link === "https://") {
-//     console.error("Invalid link for embed:", post);
-//     return;
-//   }
+  if (!link || link === "https://") {
+    console.error("Invalid link for embed:", post);
+    return;
+  }
 
-//   await agent.login({
-//     identifier: process.env.BLUESKY_USERNAME,
-//     password: process.env.BLUESKY_PASSWORD,
-//   });
+  await agent.login({
+    identifier: process.env.BLUESKY_USERNAME,
+    password: process.env.BLUESKY_PASSWORD,
+  });
 
-//   await agent.post({
-//     text: text,
-//     embed: {
-//       $type: "app.bsky.embed.external",
-//       external: {
-//         uri: post.link,
-//         title: post.title,
-//         description: post.contentSnippet || post.content || "Read more on the blog",
-//         // Optional: add a thumbnail if provided
-//         ...(post.thumb && { thumb: post.thumb })
-//       },
-//     },
-//   });
+  await agent.post({
+    text: text,
+    embed: {
+      $type: "app.bsky.embed.external",
+      external: {
+        uri: post.link,
+        title: post.title,
+        description: post.contentSnippet || post.content || "Read more on the blog",
+        // Optional: add a thumbnail if provided
+        ...(post.thumb && { thumb: post.thumb })
+      },
+    },
+  });
 
-//   console.log(`Posted ${post.title}`);
-// }
+  console.log(`Posted ${post.title}`);
+}
 
 async function readBlogspotRSS(label = "") {
 	let iter = 2;
@@ -422,7 +428,7 @@ function buildFacets(text) {
 // wednesday(); //test wednesday logic
 // readBlogspotRSS();  //uncomment to fetch list of all posts
 // readWordpressAPI();
-randomBlogspotPost(); //uncomment this to post a random post
+// randomBlogspotPost(); //uncomment this to post a random post
 // friday();
 // randomWordpressPost();
 // randomBlogspotPost();
