@@ -283,6 +283,12 @@ async function readWordpressAPI() {
 
 // end example
 
+function extractFirstImage(html) {
+  if (!html) return null;
+  const match = html.match(/<img[^>]+src="([^">]+)"/i);
+  return match ? match[1] : null;
+}
+
 function buildFacets(text) {
   const facets = [];
   const hashtagRegex = /#[\p{L}\p{N}_]+/gu; // matches hashtags with letters/numbers/underscore
