@@ -172,39 +172,87 @@ async function castWordpressAsBlogger(wordpressPost) {
   };
 }
 
-async function createPost(post, text = "") { //accept post object
-    // Validate and normalize link
+async function createPost(post, text = "") {
   let link = post.link?.trim() || "";
-  if (!/^https?:\/\//i.test(link)) {
-    link = `https://${link}`;
-  }
-
-  if (!link || link === "https://") {
-    console.error("Invalid link for embed:", post);
-    return;
-  }
+  if (!/^https?:\/\//i.test(link)) link = `https://${link}`;
+  if (!link || link === "https://") return;
 
   await agent.login({
     identifier: process.env.BLUESKY_USERNAME,
     password: process.env.BLUESKY_PASSWORD,
   });
 
-  await agent.post({
-    text: text,
-    embed: {
+  let embed = null;
+
+  // If the post has an image, upload & embed it
+  if (post.image) {
+    const blob = await uploadImage(post.image);
+    if (blob) {
+      embed = {
+        $type: "app.bsky.embed.images",
+        images: [
+          {
+            image: blob.blob,
+            alt: post.title || "Blog image"
+          }
+        ]
+      };
+    }
+  }
+
+  // If no image, fall back to external link preview
+  if (!embed) {
+    embed = {
       $type: "app.bsky.embed.external",
       external: {
         uri: post.link,
         title: post.title,
         description: post.contentSnippet || post.content || "Read more on the blog",
-        // Optional: add a thumbnail if provided
-        ...(post.thumb && { thumb: post.thumb })
       },
-    },
+    };
+  }
+
+  await agent.post({
+    text,
+    embed
   });
 
   console.log(`Posted ${post.title}`);
 }
+
+// async function createPost(post, text = "") { //accept post object
+//     // Validate and normalize link
+//   let link = post.link?.trim() || "";
+//   if (!/^https?:\/\//i.test(link)) {
+//     link = `https://${link}`;
+//   }
+
+//   if (!link || link === "https://") {
+//     console.error("Invalid link for embed:", post);
+//     return;
+//   }
+
+//   await agent.login({
+//     identifier: process.env.BLUESKY_USERNAME,
+//     password: process.env.BLUESKY_PASSWORD,
+//   });
+
+//   await agent.post({
+//     text: text,
+//     embed: {
+//       $type: "app.bsky.embed.external",
+//       external: {
+//         uri: post.link,
+//         title: post.title,
+//         description: post.contentSnippet || post.content || "Read more on the blog",
+//         // Optional: add a thumbnail if provided
+//         ...(post.thumb && { thumb: post.thumb })
+//       },
+//     },
+//   });
+
+//   console.log(`Posted ${post.title}`);
+// }
 
 async function readBlogspotRSS(label = "") {
 	let iter = 2;
