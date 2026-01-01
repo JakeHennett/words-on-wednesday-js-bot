@@ -172,19 +172,56 @@ async function castWordpressAsBlogger(wordpressPost) {
   };
 }
 
-async function createPost(post, text = "") {
+function trimGraphemes(text, max = 300) {
+  const segmenter = new Intl.Segmenter("en", { granularity: "grapheme" });
+  const graphemes = [...segmenter.segment(text)];
+  if (graphemes.length <= max) return text;
+  return graphemes.slice(0, max - 1).map(g => g.segment).join("") + "…";
+}
+
+function safeSnippet(snippet, max = 200) {
+  if (!snippet) return "";
+  snippet = snippet.replace(/\s+/g, " ").trim();
+  if (snippet.length <= max) return snippet;
+  return snippet.slice(0, max - 1) + "…";
+}
+
+async function createPost(post, label = "") {
   let link = post.link?.trim() || "";
   if (!/^https?:\/\//i.test(link)) link = `https://${link}`;
-  if (!link || link === "https://") return;
 
   await agent.login({
     identifier: process.env.BLUESKY_USERNAME,
     password: process.env.BLUESKY_PASSWORD,
   });
 
+  // PRE‑TRIM the snippet so it never dominates the post
+  const snippet = safeSnippet(post.contentSnippet, 200);
+
+  // Build the text WITHOUT trimming the link
+  let body =
+`${label}
+${post.title}
+
+${snippet}
+${link}`.trim();
+
+  // Now trim the whole thing, but if the link gets cut, restore it
+  let trimmed = trimGraphemes(body, 300);
+
+  // If the link was trimmed off, re‑append it safely
+  if (!trimmed.includes(link)) {
+    // Trim everything except the link
+    const withoutLink = trimGraphemes(
+      `${label}\n${post.title}\n\n${snippet}`,
+      300 - (link.length + 1)
+    );
+
+    trimmed = `${withoutLink}\n${link}`;
+  }
+
   let embed = null;
 
-  // If the post has an image, upload & embed it
   if (post.image) {
     const blob = await uploadImage(post.image);
     if (blob?.data?.blob) {
@@ -200,22 +237,7 @@ async function createPost(post, text = "") {
     }
   }
 
-  // If no image, fall back to external link preview
-  if (!embed) {
-    embed = {
-      $type: "app.bsky.embed.external",
-      external: {
-        uri: post.link,
-        title: post.title,
-        description: post.contentSnippet || post.content || "Read more on the blog",
-      },
-    };
-  }
-
-  await agent.post({
-    text,
-    embed
-  });
+  await agent.post({ text: trimmed, embed });
 
   console.log(`Posted ${post.title}`);
 }
