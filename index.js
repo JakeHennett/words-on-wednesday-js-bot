@@ -194,6 +194,7 @@ async function createPost(post, text = "") { //accept post object
   });
 
   console.log(`Posted ${post.title}`);
+  process.exit(0);
 }
 
 async function readBlogspotRSS(label = "") {
