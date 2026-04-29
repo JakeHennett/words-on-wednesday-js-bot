@@ -18,3 +18,6 @@ This folder contains a starter template for creating a bot on Bluesky. In this e
 ## Build exe
 To build an exe file to run locally, run this command:
 npx pkg index.js --targets node18-win-x64
+
+## Deactivation
+Actions deactivate after the repo goes without updates for a period of time. 
