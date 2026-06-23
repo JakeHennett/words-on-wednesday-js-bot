@@ -21,3 +21,4 @@ npx pkg index.js --targets node18-win-x64
 
 ## Deactivation
 Actions deactivate after the repo goes without updates for a period of time. 
+Can I somehow make the repo auto update once a month or so?
